@@ -36,7 +36,7 @@ jobs:
       shell: powershell
       run: |
         conda info
-        pyinstaller --debug all pyinstaller.spec ${{ github.event.inputs.type }}
+        pyinstaller pyinstaller.spec ${{ github.event.inputs.type }}
         $opensslPath = Get-Command openssl | Select-Object -ExpandProperty Source
         $opensslDir = Split-Path -Parent $opensslPath
         Copy-Item "$opensslDir\libssl-1_1-x64.dll" "D:\a\CQ-editor\CQ-editor\dist\CQ-editor\" -ErrorAction SilentlyContinue
