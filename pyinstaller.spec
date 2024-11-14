@@ -69,7 +69,6 @@ exe = EXE(pyz,
           strip=False,
           upx=True,
           console=True,
-          icon='icons/cadquery_logo_dark.ico')
 
 exclude = ()
 #exclude = ('libGL','libEGL','libbsd')
