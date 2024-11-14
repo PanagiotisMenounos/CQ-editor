@@ -1,9 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=CQ-editor
-Comment=CadQuery IDE
-Categories=Utility;
-Exec=CQ-editor
-Icon=cq_logo
-StartupNotify=false
-Terminal=false
