@@ -23,8 +23,9 @@ jobs:
     - name: Install CadQuery and pyinstaller
       shell: powershell
       run: |
-        conda install -c cadquery -c conda-forge cq-editor=master cadquery=master ipython=8.4.0 jedi=0.17.2 pyqtgraph=0.12.4 python=3.9
-        conda install -c conda-forge pyinstaller=4.10
+        conda install python=3.9
+        conda install -c cadquery -c conda-forge cq-editor=master cadquery=master ipython=8.4.0 jedi=0.17.2 pyqtgraph=0.12.4
+        pip install --upgrade pyinstaller==5.13.0
         pip install pipwin
         pipwin install numpy
         pip install path
@@ -36,11 +37,13 @@ jobs:
       run: |
         conda info
         pyinstaller --debug all pyinstaller.spec ${{ github.event.inputs.type }}
-        # Get-ChildItem -Path C:\ -Filter libssl-1_1-x64.dll -Recurse
-        Copy-Item "C:\Program Files\OpenSSL\bin\libssl-1_1-x64.dll"  D:\a\CQ-editor\CQ-editor\dist\CQ-editor\
-        Copy-Item "C:\Program Files\OpenSSL\bin\libcrypto-1_1-x64.dll"  D:\a\CQ-editor\CQ-editor\dist\CQ-editor\
+        $opensslPath = Get-Command openssl | Select-Object -ExpandProperty Source
+        $opensslDir = Split-Path -Parent $opensslPath
+        Copy-Item "$opensslDir\libssl-1_1-x64.dll" "D:\a\CQ-editor\CQ-editor\dist\CQ-editor\" -ErrorAction SilentlyContinue
+        Copy-Item "$opensslDir\libcrypto-1_1-x64.dll" "D:\a\CQ-editor\CQ-editor\dist\CQ-editor\" -ErrorAction SilentlyContinue
         Copy-Item D:\a\CQ-editor\CQ-editor\pyinstaller\CQ-editor.cmd D:\a\CQ-editor\CQ-editor\dist\
     - uses: actions/upload-artifact@v4
       with:
         name: CQ-editor-Windows
         path: dist
+
