@@ -40,7 +40,7 @@ jobs:
         Copy-Item "C:\Program Files\OpenSSL\bin\libssl-1_1-x64.dll"  D:\a\CQ-editor\CQ-editor\dist\CQ-editor\
         Copy-Item "C:\Program Files\OpenSSL\bin\libcrypto-1_1-x64.dll"  D:\a\CQ-editor\CQ-editor\dist\CQ-editor\
         Copy-Item D:\a\CQ-editor\CQ-editor\pyinstaller\CQ-editor.cmd D:\a\CQ-editor\CQ-editor\dist\
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v4
       with:
         name: CQ-editor-Windows
         path: dist
