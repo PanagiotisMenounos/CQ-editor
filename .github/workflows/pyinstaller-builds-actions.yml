@@ -83,7 +83,7 @@ jobs:
             Write-Host "CQ-editor.cmd not found"
         }
 
-    - uses: actions/upload-artifact@v4  # Updated to v4 for Node20 support
+    - uses: actions/upload-artifact@v4  # Updated to v4 for Node20 support.
       with:
         name: CQ-editor-Windows
         path: dist
