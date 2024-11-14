@@ -9,7 +9,6 @@ on:
         required: true
         default: 'dir'
 jobs:
-jobs:
   build-windows:
     runs-on: windows-2019
     steps:
