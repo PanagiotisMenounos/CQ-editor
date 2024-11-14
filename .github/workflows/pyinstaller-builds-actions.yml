@@ -9,41 +9,83 @@ on:
         required: true
         default: 'dir'
 jobs:
+jobs:
   build-windows:
     runs-on: windows-2019
     steps:
-    - uses: actions/checkout@v2
-    - uses: conda-incubator/setup-miniconda@v2
+    - uses: actions/checkout@v4  # Updated to v4 for Node20 support
+    - uses: conda-incubator/setup-miniconda@v3  # Updated to v3 for Node20 support
       with:
         miniconda-version: "latest"
         channels: conda-forge,defaults
         auto-update-conda: true
         python-version: 3.9
         activate-environment: test
-    - name: Install CadQuery and pyinstaller
+    
+    - name: Install CadQuery, CQ-editor, and pyinstaller
       shell: powershell
       run: |
-        conda install python=3.9
-        conda install -c cadquery -c conda-forge cq-editor=master cadquery=master ipython=8.4.0 jedi=0.17.2 pyqtgraph=0.12.4
-        pip install --upgrade pyinstaller==5.13.0
+        conda install -c cadquery -c conda-forge cq-editor=master cadquery=master ipython=8.4.0 jedi=0.17.2 pyqtgraph=0.12.4 python=3.9
+        pip install --upgrade pyinstaller==5.13.0  # Updated PyInstaller version
         pip install pipwin
         pipwin install numpy
         pip install path
         pip install git+https://github.com/gumyr/cq_warehouse.git#egg=cq_warehouse
         pip install git+https://github.com/meadiode/cq_gears.git@main
         pip install -e "git+https://github.com/CadQuery/cadquery-plugins.git#egg=cq_cache&subdirectory=plugins/cq_cache"
+
     - name: Run build
       shell: powershell
       run: |
         conda info
-        pyinstaller pyinstaller.spec ${{ github.event.inputs.type }}
+        # Run PyInstaller with the correct paths for PyQt5 resources
+        pyinstaller --paths "C:\Miniconda3\envs\test\Lib\site-packages\PyQt5\Qt\bin" pyinstaller.spec ${{ github.event.inputs.type }}
+        
+        # Dynamically locate OpenSSL DLLs and copy them if they exist
         $opensslPath = Get-Command openssl | Select-Object -ExpandProperty Source
         $opensslDir = Split-Path -Parent $opensslPath
-        Copy-Item "$opensslDir\libssl-1_1-x64.dll" "D:\a\CQ-editor\CQ-editor\dist\CQ-editor\" -ErrorAction SilentlyContinue
-        Copy-Item "$opensslDir\libcrypto-1_1-x64.dll" "D:\a\CQ-editor\CQ-editor\dist\CQ-editor\" -ErrorAction SilentlyContinue
-        Copy-Item D:\a\CQ-editor\CQ-editor\pyinstaller\CQ-editor.cmd D:\a\CQ-editor\CQ-editor\dist\
-    - uses: actions/upload-artifact@v4
+
+        # Copy OpenSSL DLLs from OpenSSL installation directory
+        if (Test-Path "$opensslDir\libssl-1_1-x64.dll") {
+            Copy-Item "$opensslDir\libssl-1_1-x64.dll" "D:\a\CQ-editor\CQ-editor\dist\CQ-editor\" -Force
+            Write-Host "Copied libssl-1_1-x64.dll"
+        } else {
+            Write-Host "libssl-1_1-x64.dll not found"
+        }
+
+        if (Test-Path "$opensslDir\libcrypto-1_1-x64.dll") {
+            Copy-Item "$opensslDir\libcrypto-1_1-x64.dll" "D:\a\CQ-editor\CQ-editor\dist\CQ-editor\" -Force
+            Write-Host "Copied libcrypto-1_1-x64.dll"
+        } else {
+            Write-Host "libcrypto-1_1-x64.dll not found"
+        }
+
+        # Fallback to check system32 directory if OpenSSL DLLs are missing
+        if (-Not (Test-Path "D:\a\CQ-editor\CQ-editor\dist\CQ-editor\libssl-1_1-x64.dll")) {
+            if (Test-Path "C:\Windows\system32\libssl-1_1-x64.dll") {
+                Copy-Item "C:\Windows\system32\libssl-1_1-x64.dll" "D:\a\CQ-editor\CQ-editor\dist\CQ-editor\" -Force
+                Write-Host "Copied libssl-1_1-x64.dll from system32"
+            }
+        }
+
+        if (-Not (Test-Path "D:\a\CQ-editor\CQ-editor\dist\CQ-editor\libcrypto-1_1-x64.dll")) {
+            if (Test-Path "C:\Windows\system32\libcrypto-1_1-x64.dll") {
+                Copy-Item "C:\Windows\system32\libcrypto-1_1-x64.dll" "D:\a\CQ-editor\CQ-editor\dist\CQ-editor\" -Force
+                Write-Host "Copied libcrypto-1_1-x64.dll from system32"
+            }
+        }
+
+        # Copy CQ-editor.cmd to the distribution folder
+        if (Test-Path "D:\a\CQ-editor\CQ-editor\pyinstaller\CQ-editor.cmd") {
+            Copy-Item "D:\a\CQ-editor\CQ-editor\pyinstaller\CQ-editor.cmd" "D:\a\CQ-editor\CQ-editor\dist\" -Force
+            Write-Host "Copied CQ-editor.cmd"
+        } else {
+            Write-Host "CQ-editor.cmd not found"
+        }
+
+    - uses: actions/upload-artifact@v4  # Updated to v4 for Node20 support
       with:
         name: CQ-editor-Windows
         path: dist
+
 
