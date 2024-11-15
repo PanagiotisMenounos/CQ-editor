@@ -24,7 +24,7 @@ jobs:
       shell: powershell
       run: |
         conda install python=3.9
-        conda install -c cadquery -c conda-forge cadquery=master
+        conda install -c cadquery -c conda-forge cq-editor=master cadquery=master ipython=8.4.0 jedi=0.17.2 pyqtgraph=0.12.4
         pip install --upgrade pyinstaller==5.13.0
         pip install pipwin
         pipwin install numpy
