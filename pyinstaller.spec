@@ -16,9 +16,6 @@ ocp_path = (os.path.join(HOMEPATH, 'OCP.cp39-win_amd64.pyd'), '.')
 datas1, binaries1, hiddenimports1 = collect_all('debugpy')
 hiddenimports2 = collect_submodules('xmlrpc')
 
-# Collect binaries from casadi package
-casadi_binaries = collect_dynamic_libs('casadi')
-
 a = Analysis(['src/run.py'],
              pathex=['.'],
              binaries=[ocp_path] + binaries1,
