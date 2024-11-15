@@ -10,18 +10,14 @@ spyder_data = Path(site.getsitepackages()[-1]) / 'spyder'
 parso_grammar = (Path(site.getsitepackages()[-1]) / 'parso/python').glob('grammar*')
 cqw_path = Path(site.getsitepackages()[-1]) / 'cq_warehouse'
 
-if sys.platform == 'linux':
-    occt_dir = os.path.join(Path(sys.prefix), 'share', 'opencascade')
-    ocp_path = (os.path.join(HOMEPATH, 'OCP.cpython-39-x86_64-linux-gnu.so'), '.')
-elif sys.platform == 'darwin':
-    occt_dir = os.path.join(Path(sys.prefix), 'share', 'opencascade')
-    ocp_path = (os.path.join(HOMEPATH, 'OCP.cpython-39-darwin.so'), '.')
-elif sys.platform == 'win32':
-    occt_dir = os.path.join(Path(sys.prefix), 'Library', 'share', 'opencascade')
-    ocp_path = (os.path.join(HOMEPATH, 'OCP.cp39-win_amd64.pyd'), '.')
+occt_dir = os.path.join(Path(sys.prefix), 'Library', 'share', 'opencascade')
+ocp_path = (os.path.join(HOMEPATH, 'OCP.cp39-win_amd64.pyd'), '.')
 
 datas1, binaries1, hiddenimports1 = collect_all('debugpy')
 hiddenimports2 = collect_submodules('xmlrpc')
+
+# Collect binaries from casadi package
+casadi_binaries = collect_dynamic_libs('casadi')
 
 a = Analysis(['src/run.py'],
              pathex=['.'],
@@ -38,8 +34,7 @@ a = Analysis(['src/run.py'],
                             'cq_warehouse.drafting', 'cq_warehouse.extensions', 'cq_warehouse.fastener',
                             'cq_warehouse.sprocket', 'cq_warehouse.thread', 'cq_gears', 'cq_cache'] + hiddenimports1 + hiddenimports2,
              hookspath=[],
-             runtime_hooks=['pyinstaller/pyi_rth_occ.py',
-                            'pyinstaller/pyi_rth_fontconfig.py'],
+             runtime_hooks=['pyinstaller/pyi_rth_occ.py'],
              excludes=['_tkinter'],
              win_no_prefer_redirects=False,
              win_private_assemblies=False,
@@ -71,7 +66,6 @@ exe = EXE(pyz,
           console=True)
 
 exclude = ()
-#exclude = ('libGL','libEGL','libbsd')
 a.binaries = TOC([x for x in a.binaries if not x[0].startswith(exclude)])
 
 coll = COLLECT(exe,
