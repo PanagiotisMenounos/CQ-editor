@@ -2,52 +2,33 @@
 
 import sys, site, os
 from path import Path
-from PyInstaller.utils.hooks import collect_all, collect_submodules
 
 block_cipher = None
-
-spyder_data = Path(site.getsitepackages()[-1]) / 'spyder'
-parso_grammar = (Path(site.getsitepackages()[-1]) / 'parso/python').glob('grammar*')
-cqw_path = Path(site.getsitepackages()[-1]) / 'cq_warehouse'
 
 occt_dir = os.path.join(Path(sys.prefix), 'Library', 'share', 'opencascade')
 ocp_path = (os.path.join(HOMEPATH, 'OCP.cp39-win_amd64.pyd'), '.')
 
-datas1, binaries1, hiddenimports1 = collect_all('debugpy')
-hiddenimports2 = collect_submodules('xmlrpc')
-
 a = Analysis(['src/run.py'],
              pathex=['.'],
-             binaries=[ocp_path] + binaries1,
-             datas=[(spyder_data, 'spyder'),
-                    (occt_dir, 'opencascade'),
-                    (cqw_path, 'cq_warehouse')] +
-                    [(p, 'parso/python') for p in parso_grammar] + datas1,
+             binaries=[ocp_path],
+             datas=[(occt_dir, 'opencascade')],
              hiddenimports=['ipykernel.datapub', 'vtkmodules', 'vtkmodules.all',
                             'pyqtgraph.graphicsItems.ViewBox.axisCtrlTemplate_pyqt5',
                             'pyqtgraph.graphicsItems.PlotItem.plotConfigTemplate_pyqt5',
                             'pyqtgraph.imageview.ImageViewTemplate_pyqt5', 'debugpy', 'xmlrpc',
                             'zmq.backend', 'cq_warehouse', 'cq_warehouse.bearing', 'cq_warehouse.chain',
                             'cq_warehouse.drafting', 'cq_warehouse.extensions', 'cq_warehouse.fastener',
-                            'cq_warehouse.sprocket', 'cq_warehouse.thread', 'cq_gears', 'cq_cache'] + hiddenimports1 + hiddenimports2,
+                            'cq_warehouse.sprocket', 'cq_warehouse.thread', 'cq_gears', 'cq_cache'],
              hookspath=[],
              runtime_hooks=['pyinstaller/pyi_rth_occ.py'],
-             excludes=['_tkinter'],
+             excludes=[],
              win_no_prefer_redirects=False,
              win_private_assemblies=False,
              cipher=block_cipher,
              noarchive=False)
 
-# There is an issue that keeps the OpenSSL libraries from being copied to the output directory.
-# This should work if nothing else, but does not with GitHub Actions
-if sys.platform == 'win32':
-    from PyInstaller.depend.bindepend import getfullnameof
-    rel_data_path = ['PyQt5', 'Qt', 'bin']
-    a.datas += [
-        (getfullnameof('libssl-1_1-x64.dll'), os.path.join(*rel_data_path), 'DATA'),
-        (getfullnameof('libcrypto-1_1-x64.dll'), os.path.join(*rel_data_path), 'DATA'),
-    ]
-
+# future warning for local build: add the following getfullnameof('libssl-1_1-x64.dll'), getfullnameof('libcrypto-1_1-x64.dll') to a.datas
+# if you build on github actions the pyinstaller-builds-actions.yml does the work for you
 
 pyz = PYZ(a.pure, a.zipped_data,
              cipher=block_cipher)
