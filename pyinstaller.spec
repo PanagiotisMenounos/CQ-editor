@@ -23,7 +23,7 @@ elif sys.platform == 'win32':
 datas1, binaries1, hiddenimports1 = collect_all('debugpy')
 hiddenimports2 = collect_submodules('xmlrpc')
 
-a = Analysis(['run.py'],
+a = Analysis(['src/run.py'],
              pathex=['.'],
              binaries=[ocp_path] + binaries1,
              datas=[(spyder_data, 'spyder'),
