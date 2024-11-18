@@ -9,11 +9,20 @@ block_cipher = None
 spyder_data = Path(site.getsitepackages()[-1]) / 'spyder'
 parso_grammar = (Path(site.getsitepackages()[-1]) / 'parso/python').glob('grammar*')
 cqw_path = Path(site.getsitepackages()[-1]) / 'cq_warehouse'
-occt_dir = os.path.join(Path(sys.prefix), 'Library', 'share', 'opencascade')
-ocp_path = (os.path.join(HOMEPATH, 'OCP.cp39-win_amd64.pyd'), '.')
+
+if sys.platform == 'linux':
+    occt_dir = os.path.join(Path(sys.prefix), 'share', 'opencascade')
+    ocp_path = (os.path.join(HOMEPATH, 'OCP.cpython-39-x86_64-linux-gnu.so'), '.')
+elif sys.platform == 'darwin':
+    occt_dir = os.path.join(Path(sys.prefix), 'share', 'opencascade')
+    ocp_path = (os.path.join(HOMEPATH, 'OCP.cpython-39-darwin.so'), '.')
+elif sys.platform == 'win32':
+    occt_dir = os.path.join(Path(sys.prefix), 'Library', 'share', 'opencascade')
+    ocp_path = (os.path.join(HOMEPATH, 'OCP.cp39-win_amd64.pyd'), '.')
 
 datas1, binaries1, hiddenimports1 = collect_all('debugpy')
 hiddenimports2 = collect_submodules('xmlrpc')
+
 a = Analysis(['src/run.py'],
              pathex=['.'],
              binaries=[ocp_path] + binaries1,
@@ -29,7 +38,8 @@ a = Analysis(['src/run.py'],
                             'cq_warehouse.drafting', 'cq_warehouse.extensions', 'cq_warehouse.fastener',
                             'cq_warehouse.sprocket', 'cq_warehouse.thread', 'cq_gears', 'cq_cache'] + hiddenimports1 + hiddenimports2,
              hookspath=[],
-             runtime_hooks=['pyinstaller/pyi_rth_occ.py'],
+             runtime_hooks=['pyinstaller/pyi_rth_occ.py',
+                            'pyinstaller/pyi_rth_fontconfig.py'],
              excludes=['_tkinter'],
              win_no_prefer_redirects=False,
              win_private_assemblies=False,
@@ -46,6 +56,7 @@ if sys.platform == 'win32':
         (getfullnameof('libcrypto-1_1-x64.dll'), os.path.join(*rel_data_path), 'DATA'),
     ]
 
+
 pyz = PYZ(a.pure, a.zipped_data,
              cipher=block_cipher)
 exe = EXE(pyz,
@@ -60,6 +71,7 @@ exe = EXE(pyz,
           console=True)
 
 exclude = ()
+#exclude = ('libGL','libEGL','libbsd')
 a.binaries = TOC([x for x in a.binaries if not x[0].startswith(exclude)])
 
 coll = COLLECT(exe,
