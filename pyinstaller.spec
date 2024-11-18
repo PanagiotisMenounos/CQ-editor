@@ -10,18 +10,8 @@ spyder_data = Path(site.getsitepackages()[-1]) / 'spyder'
 parso_grammar = (Path(site.getsitepackages()[-1]) / 'parso/python').glob('grammar*')
 cqw_path = Path(site.getsitepackages()[-1]) / 'cq_warehouse'
 
-if sys.platform == 'linux':
-    occt_dir = os.path.join(Path(sys.prefix), 'share', 'opencascade')
-    ocp_path = (os.path.join(HOMEPATH, 'OCP.cpython-39-x86_64-linux-gnu.so'), '.')
-elif sys.platform == 'darwin':
-    occt_dir = os.path.join(Path(sys.prefix), 'share', 'opencascade')
-    ocp_path = (os.path.join(HOMEPATH, 'OCP.cpython-39-darwin.so'), '.')
-elif sys.platform == 'win32':
-    occt_dir = os.path.join(Path(sys.prefix), 'Library', 'share', 'opencascade')
-    ocp_path = (os.path.join(HOMEPATH, 'OCP.cp39-win_amd64.pyd'), '.')
-
-datas1, binaries1, hiddenimports1 = collect_all('debugpy')
-hiddenimports2 = collect_submodules('xmlrpc')
+occt_dir = os.path.join(Path(sys.prefix), 'Library', 'share', 'opencascade')
+ocp_path = (os.path.join(HOMEPATH, 'OCP.cp39-win_amd64.pyd'), '.')
 
 a = Analysis(['src/run.py'],
              pathex=['.'],
@@ -36,7 +26,7 @@ a = Analysis(['src/run.py'],
                             'pyqtgraph.imageview.ImageViewTemplate_pyqt5', 'debugpy', 'xmlrpc',
                             'zmq.backend', 'cq_warehouse', 'cq_warehouse.bearing', 'cq_warehouse.chain',
                             'cq_warehouse.drafting', 'cq_warehouse.extensions', 'cq_warehouse.fastener',
-                            'cq_warehouse.sprocket', 'cq_warehouse.thread', 'cq_gears', 'cq_cache'] + hiddenimports1 + hiddenimports2,
+                            'cq_warehouse.sprocket', 'cq_warehouse.thread', 'cq_gears', 'cq_cache'],
              hookspath=[],
              runtime_hooks=['pyinstaller/pyi_rth_occ.py',
                             'pyinstaller/pyi_rth_fontconfig.py'],
