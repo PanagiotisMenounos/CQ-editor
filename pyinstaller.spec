@@ -28,24 +28,12 @@ a = Analysis(['src/run.py'],
                             'cq_warehouse.drafting', 'cq_warehouse.extensions', 'cq_warehouse.fastener',
                             'cq_warehouse.sprocket', 'cq_warehouse.thread', 'cq_gears', 'cq_cache'],
              hookspath=[],
-             runtime_hooks=['pyinstaller/pyi_rth_occ.py',
-                            'pyinstaller/pyi_rth_fontconfig.py'],
-             excludes=['_tkinter'],
+             runtime_hooks=['pyinstaller/pyi_rth_occ.py'],
+             excludes=[],
              win_no_prefer_redirects=False,
              win_private_assemblies=False,
              cipher=block_cipher,
              noarchive=False)
-
-# There is an issue that keeps the OpenSSL libraries from being copied to the output directory.
-# This should work if nothing else, but does not with GitHub Actions
-if sys.platform == 'win32':
-    from PyInstaller.depend.bindepend import getfullnameof
-    rel_data_path = ['PyQt5', 'Qt', 'bin']
-    a.datas += [
-        (getfullnameof('libssl-1_1-x64.dll'), os.path.join(*rel_data_path), 'DATA'),
-        (getfullnameof('libcrypto-1_1-x64.dll'), os.path.join(*rel_data_path), 'DATA'),
-    ]
-
 
 pyz = PYZ(a.pure, a.zipped_data,
              cipher=block_cipher)
