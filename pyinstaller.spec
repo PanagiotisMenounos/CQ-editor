@@ -15,11 +15,11 @@ ocp_path = (os.path.join(HOMEPATH, 'OCP.cp39-win_amd64.pyd'), '.')
 
 a = Analysis(['src/run.py'],
              pathex=['.'],
-             binaries=[ocp_path] + binaries1,
+             binaries=[ocp_path],
              datas=[(spyder_data, 'spyder'),
                     (occt_dir, 'opencascade'),
                     (cqw_path, 'cq_warehouse')] +
-                    [(p, 'parso/python') for p in parso_grammar] + datas1,
+                    [(p, 'parso/python') for p in parso_grammar],
              hiddenimports=['ipykernel.datapub', 'vtkmodules', 'vtkmodules.all',
                             'pyqtgraph.graphicsItems.ViewBox.axisCtrlTemplate_pyqt5',
                             'pyqtgraph.graphicsItems.PlotItem.plotConfigTemplate_pyqt5',
