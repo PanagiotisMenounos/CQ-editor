@@ -2,7 +2,6 @@
 
 import sys, site, os
 from path import Path
-from PyInstaller.utils.hooks import collect_all, collect_submodules
 
 block_cipher = None
 

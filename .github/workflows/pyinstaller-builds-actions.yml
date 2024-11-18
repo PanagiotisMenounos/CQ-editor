@@ -24,7 +24,7 @@ jobs:
       shell: powershell
       run: |
         conda install python=3.9
-        conda install -c cadquery -c conda-forge cq-editor=master cadquery=master
+        conda install -c cadquery -c conda-forge cadquery=master
         pip install --upgrade pyinstaller==5.13.0
     - name: Run build
       shell: powershell
