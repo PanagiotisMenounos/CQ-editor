@@ -10,9 +10,9 @@ ocp_path = (os.path.join(HOMEPATH, 'OCP.cp39-win_amd64.pyd'), '.')
 
 a = Analysis(['src/run.py'],
              pathex=['.'],
-             binaries=[ocp_path],
-             datas=[(occt_dir, 'opencascade')],
-             hiddenimports=['vtkmodules'],
+             binaries=[],
+             datas=[],
+             hiddenimports=['vtkmodules', 'vtkmodules.all'],
              hookspath=[],
              runtime_hooks=['pyinstaller/pyi_rth_occ.py'],
              excludes=[],
