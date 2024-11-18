@@ -10,7 +10,7 @@ ocp_path = (os.path.join(HOMEPATH, 'OCP.cp39-win_amd64.pyd'), '.')
 
 a = Analysis(['src/run.py'],
              pathex=['.'],
-             binaries=[],
+             binaries=[ocp_path],
              datas=[],
              hiddenimports=['vtkmodules', 'vtkmodules.all'],
              hookspath=[],
