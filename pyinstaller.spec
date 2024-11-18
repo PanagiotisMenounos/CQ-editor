@@ -6,20 +6,13 @@ from PyInstaller.utils.hooks import collect_all, collect_submodules
 
 block_cipher = None
 
-spyder_data = Path(site.getsitepackages()[-1]) / 'spyder'
-parso_grammar = (Path(site.getsitepackages()[-1]) / 'parso/python').glob('grammar*')
-cqw_path = Path(site.getsitepackages()[-1]) / 'cq_warehouse'
-
 occt_dir = os.path.join(Path(sys.prefix), 'Library', 'share', 'opencascade')
 ocp_path = (os.path.join(HOMEPATH, 'OCP.cp39-win_amd64.pyd'), '.')
 
 a = Analysis(['src/run.py'],
              pathex=['.'],
              binaries=[ocp_path],
-             datas=[(spyder_data, 'spyder'),
-                    (occt_dir, 'opencascade'),
-                    (cqw_path, 'cq_warehouse')] +
-                    [(p, 'parso/python') for p in parso_grammar],
+             datas=[(occt_dir, 'opencascade')],
              hiddenimports=['ipykernel.datapub', 'vtkmodules', 'vtkmodules.all',
                             'pyqtgraph.graphicsItems.ViewBox.axisCtrlTemplate_pyqt5',
                             'pyqtgraph.graphicsItems.PlotItem.plotConfigTemplate_pyqt5',
@@ -49,7 +42,6 @@ exe = EXE(pyz,
           console=True)
 
 exclude = ()
-#exclude = ('libGL','libEGL','libbsd')
 a.binaries = TOC([x for x in a.binaries if not x[0].startswith(exclude)])
 
 coll = COLLECT(exe,
