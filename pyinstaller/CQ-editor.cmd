@@ -1,1 +1,0 @@
-call .\CQ-editor\CQ-editor.exe
