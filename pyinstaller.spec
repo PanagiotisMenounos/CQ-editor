@@ -5,7 +5,6 @@ from path import Path
 
 block_cipher = None
 
-occt_dir = os.path.join(Path(sys.prefix), 'Library', 'share', 'opencascade')
 ocp_path = (os.path.join(HOMEPATH, 'OCP.cp39-win_amd64.pyd'), '.')
 
 a = Analysis(['src/run.py'],
@@ -14,7 +13,7 @@ a = Analysis(['src/run.py'],
              datas=[],
              hiddenimports=['vtkmodules', 'vtkmodules.all'],
              hookspath=[],
-             runtime_hooks=['pyinstaller/pyi_rth_occ.py'],
+             runtime_hooks=[],
              excludes=[],
              win_no_prefer_redirects=False,
              win_private_assemblies=False,
